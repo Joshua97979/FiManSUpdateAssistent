@@ -77,6 +77,8 @@ public class Model {
 	}
 	
 	public Model(){
+		System.out.println("Das ist ein Test");
+		
 		LAST_USED_FOLDER_KEY = "lastUsedFolder";
 		LAST_PROGRAM_START_KEY = "lastProgramStart";
 		
