@@ -54,7 +54,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.2";
+	private static String version = "V1.3";
 	
 	private Config configFile;
 	

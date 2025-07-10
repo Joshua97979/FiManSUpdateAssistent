@@ -7,9 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicArrowButton;
@@ -94,7 +95,18 @@ public class SearchBar extends JPanel{
 	}
 	
 	private void sortLabels() {
-		Arrays.sort(labels, (a, b) -> Integer.compare((int)a.getClientProperty("gridy"), (int)b.getClientProperty("gridy")));
+		ArrayList<JLabel> validLabels = new ArrayList<>();
+
+	    for (JLabel label : labels) {
+	        Object gridy = label.getClientProperty("gridy");
+	        if (gridy instanceof Integer) {
+	            validLabels.add(label);
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Label ohne gültige 'gridy'-Property gefunden! Text: " + label.getText() + "\n Bitte Entwickler melden.");
+	        }
+	    }
+	    validLabels.sort(Comparator.comparingInt(l -> (Integer) l.getClientProperty("gridy")));
+	    labels = validLabels.toArray(new JLabel[0]);
 	}
 
 	private void searchForText(String searchText) {
@@ -121,7 +133,6 @@ public class SearchBar extends JPanel{
 		for (int i = 0; i < matchingLabels.size(); i++) {
 			DescriptionPanel.highlightLabel(matchingLabels.get(i), searchText, new Color(255, 255, 119)); //yellow
 		}
-		
 		
 		DescriptionPanel.removeHighlights(matchingLabels.get(searchIndex));
 		DescriptionPanel.highlightLabel(matchingLabels.get(searchIndex), searchText, new Color(237, 151, 56)); //orange

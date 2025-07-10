@@ -616,6 +616,7 @@ public class DescriptionPanel extends JPanel{
     	
     	gbc_constraints.gridy = gridy;
     	contentPanel.add(hyperlink, gbc_constraints);
+    	hyperlink.putClientProperty("gridy", gridy);
     	
     	gridy++;
     	resizeScrollMax();
