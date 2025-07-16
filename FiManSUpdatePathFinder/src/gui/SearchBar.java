@@ -1,6 +1,7 @@
 package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 @SuppressWarnings("serial")
@@ -54,17 +56,49 @@ public class SearchBar extends JPanel{
 		buttonPanel.setLayout(new BorderLayout());
 		this.add(buttonPanel, BorderLayout.EAST);
 		
-		BasicArrowButton btnSearchUp = new BasicArrowButton(1);
-		BasicArrowButton btnSearchDown = new BasicArrowButton(5);
+		buttonPanel.setPreferredSize(new Dimension(((Integer) UIManager.get("ScrollBar.width")).intValue(), searchField.getPreferredSize().height));
+		
+		//class BasicArrowButton overrides the method getPreferredSize()
+		BasicArrowButton btnSearchUp = new BasicArrowButton(1) {
+			@Override
+			 public Dimension getPreferredSize() {
+				 	return new Dimension(buttonPanel.getPreferredSize().width, (buttonPanel.getPreferredSize().height / 2));
+			 }
+		};
+        
+         //class BasicArrowButton overrides the method getPreferredSize()
+         BasicArrowButton btnSearchDown = new BasicArrowButton(5) {
+        	 @Override
+        	 public Dimension getPreferredSize() {
+				 return new Dimension(buttonPanel.getPreferredSize().width, (buttonPanel.getPreferredSize().height / 2));
+        	 }
+         };
+		
 		buttonPanel.add(btnSearchUp, BorderLayout.NORTH);
 		buttonPanel.add(btnSearchDown, BorderLayout.SOUTH);
-		
 		
 		searchField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				searchIndex = 0;
-				searchCount = 0;
+				if (e.getKeyCode() != 40 && e.getKeyCode() != 38) {
+					searchIndex = 0;
+					searchCount = 0;
+				} else {
+					if (e.getKeyCode() == 40) {
+						if (e.isControlDown()) {
+							searchIndex = -1; //will be set to max in searchForText() 
+						} else {
+							searchIndex++;
+						}
+					} else if (e.getKeyCode() == 38) {
+						if (e.isControlDown()) {
+							searchIndex = 0;
+						} else {
+							searchIndex--;
+						}
+					}
+				}
+				
 				searchForText(searchField.getText());
 			}
 		});
