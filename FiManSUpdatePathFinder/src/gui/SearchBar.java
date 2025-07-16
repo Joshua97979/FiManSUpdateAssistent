@@ -80,7 +80,6 @@ public class SearchBar extends JPanel{
 		searchField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				System.out.println(e.getKeyCode());
 				if (e.getKeyCode() != 40 && e.getKeyCode() != 38 && e.getKeyCode() != 17) { // 17 = ctrl Key
 					searchIndex = 0;
 					searchCount = 0;
