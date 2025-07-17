@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.dnd.DnDConstants;
@@ -302,39 +304,28 @@ public class View extends JFrame{
 	}
 	
 	public void addAssButton() {
-		copyAssButton = new JButton(new ImageIcon(getClass().getResource("/icons/Copy_Icon.png")));
-		copyAssButton.setPreferredSize(new Dimension(30, copyAssButton.getHeight()));
+		copyAssButton = new ScaledButton(getClass().getResource("/icons/Copy_Icon.png"), this.getFont());
 		copyAssButton.addActionListener(copyAssButtonListener);
 		copyAssButton.setToolTipText("DSPDTAARA Befehl in Zwischenablage kopieren");
 		comboBoxPanel.add(copyAssButton);
 	}
 	
 	public void addFibButton() {
-		copyFibButton = new JButton(new ImageIcon(getClass().getResource("/icons/Copy_Icon.png")));
-		copyFibButton.setPreferredSize(new Dimension(30, copyFibButton.getHeight()));
+		copyFibButton = new ScaledButton(getClass().getResource("/icons/Copy_Icon.png"), this.getFont());
 		copyFibButton.addActionListener(copyFibButtonListener);
 		copyFibButton.setToolTipText("DSPDTAARA Befehl in Zwischenablage kopieren");
 		comboBoxPanel.add(copyFibButton);
 	}
 	
 	public void addTargetFibButton() {
-		copyTargetFibButton = new JButton(new ImageIcon(getClass().getResource("/icons/Copy_Icon.png")));
-		copyTargetFibButton.setPreferredSize(new Dimension(30, copyTargetFibButton.getHeight()));
+		copyTargetFibButton = new ScaledButton(getClass().getResource("/icons/Copy_Icon.png"), this.getFont());
 		copyTargetFibButton.addActionListener(copyFibButtonListener);
 		copyTargetFibButton.setToolTipText("DSPDTAARA Befehl in Zwischenablage kopieren");
 		comboBoxPanel.add(copyTargetFibButton);
 	}
 	
 	public void addTargetAssButton() {
-		ImageIcon copycopyTargetAssIcon = new ImageIcon(getClass().getResource("/icons/Copy_Icon.png"));
-		//TODO Icon scalen
-		//Image newImage = new ImageIcon(getClass().getResource("/icons/Copy_Icon.png")).getImage();
-		//Image scaledImage = newImage.getScaledInstance(-5, -5, Image.SCALE_DEFAULT);
-		//ImageIcon imageIcon = new ImageIcon(scaledImage);
-		//Image newimg = image.getScaledInstance(120, 120,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
-		//copyTargetAssButton = new JButton(imageIcon);
-		copyTargetAssButton = new JButton(copycopyTargetAssIcon);
-		copyTargetAssButton.setPreferredSize(new Dimension(30, copyTargetAssButton.getHeight()));
+		copyTargetAssButton = new ScaledButton(getClass().getResource("/icons/Copy_Icon.png"), this.getFont());
 		copyTargetAssButton.addActionListener(copyAssButtonListener);
 		copyTargetAssButton.setToolTipText("DSPDTAARA Befehl in Zwischenablage kopieren");
 		comboBoxPanel.add(copyTargetAssButton);
@@ -372,7 +363,6 @@ public class View extends JFrame{
 		ListItemPanel newPanel = new ListItemPanel(update, updStr, this, secondaryBackgroundColor, secondaryForegroundColor);
 		checkBoxes.addAll(newPanel.checkBoxes);
 		listItems.add(newPanel);
-		//newPanel.setPreferredSize(new Dimension(0, 100));
 		
 		listContainer.add(newPanel);
         listContainer.validate();
@@ -401,9 +391,6 @@ public class View extends JFrame{
 		
 		getContentPane().add(mainPanel);
 		
-		copyAssButton = new JButton();
-		copyAssButton.setFont(this.getFont());
-		
 		mainPanel.setLayout(new BorderLayout());
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -420,7 +407,24 @@ public class View extends JFrame{
 		
 		final JPopupMenu menu = new JPopupMenu("Menu");
 		
-		JMenuItem itemSave = new JMenuItem("Speichern", new ImageIcon(getClass().getResource("/icons/Save_Icon.png")));
+		class ScaledMenuItem extends JMenuItem {
+			ScaledMenuItem(String text, URL url, Font font) {
+				JComboBox<String> tmpBox = new JComboBox<String>();
+				tmpBox.setFont(font);
+				int size = (int) Math.round(tmpBox.getPreferredSize().getHeight());
+				int imageSize = (int) (size * 0.7);
+				tmpBox = null; //just to make sure
+
+				Image newImage = new ImageIcon(url).getImage();
+				Image scaledImage = newImage.getScaledInstance(imageSize, imageSize, Image.SCALE_SMOOTH);
+				ImageIcon copyTargetAssIcon = new ImageIcon(scaledImage);
+		 
+				this.setIcon(copyTargetAssIcon);
+				this.setText(text);
+			}
+		}
+		
+		JMenuItem itemSave = new ScaledMenuItem("Speichern", getClass().getResource("/icons/Save_Icon.png"), this.getFont());
 		itemSave.setToolTipText("STRG + S oder STRG + S + ALT für Zwischenablage");
 		itemSave.addActionListener(new ActionListener() {
 			@Override
@@ -433,7 +437,7 @@ public class View extends JFrame{
         
         menu.addSeparator();
         
-        JMenuItem itemLoad = new JMenuItem("Laden", new ImageIcon(getClass().getResource("/icons/Download_Icon.png")));
+        JMenuItem itemLoad = new ScaledMenuItem("Laden", getClass().getResource("/icons/Download_Icon.png"), this.getFont());
         itemLoad.setToolTipText("STRG + L oder STRG + L + ALT für Zwischenablage");
         itemLoad.addActionListener(new ActionListener() {
 			@Override
@@ -446,7 +450,7 @@ public class View extends JFrame{
         
         menu.addSeparator();
         
-        JMenuItem itemExport = new JMenuItem("Liste Exportieren", new ImageIcon(getClass().getResource("/icons/Description_Icon.png")));
+        JMenuItem itemExport = new ScaledMenuItem("Liste Exportieren", getClass().getResource("/icons/Description_Icon.png"), this.getFont());
         itemExport.setToolTipText("STRG + X oder STRG + X + ALT für Zwischenablage");
         itemExport.addActionListener(new ActionListener() {
 			@Override
@@ -459,7 +463,7 @@ public class View extends JFrame{
         
         menu.addSeparator();
         
-        JMenuItem itemNewList = new JMenuItem("Neue Liste erstellen", new ImageIcon(getClass().getResource("/icons/NewList_Icon.png")));
+        JMenuItem itemNewList = new ScaledMenuItem("Neue Liste erstellen", getClass().getResource("/icons/NewList_Icon.png"), this.getFont());
         itemNewList.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -471,7 +475,7 @@ public class View extends JFrame{
         
         menu.addSeparator();
         
-        JMenuItem itemOptions = new JMenuItem("Einstellungen", new ImageIcon(getClass().getResource("/icons/Gear_Icon.png")));
+        JMenuItem itemOptions = new ScaledMenuItem("Einstellungen", getClass().getResource("/icons/Gear_Icon.png"), this.getFont());
         itemOptions.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -488,15 +492,13 @@ public class View extends JFrame{
         
         
         
-		JButton menuButton = new JButton(new ImageIcon(getClass().getResource("/icons/Menu_Icon.png")));
+        JButton menuButton = new ScaledButton(getClass().getResource("/icons/Menu_Icon.png"), this.getFont());
 		menuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				menu.show(menuButton, 0, menuButton.getHeight());
 			}
 		});
 		menuButton.setToolTipText("Menü");
-		menuButton.setPreferredSize(new Dimension(30, 30));
-		menuButton.setMaximumSize(new Dimension(30, 30));
 		panelTop.add(menuButton, BorderLayout.WEST);
 		
 		comboBoxPanel = new JPanel();

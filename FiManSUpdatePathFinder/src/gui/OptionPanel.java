@@ -12,7 +12,6 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -67,8 +66,7 @@ public class OptionPanel extends JPanel{
 		textFieldPathToUpdates = new JTextField();
 		textFieldPathToUpdates.setFont(this.getFont());
 		panelFile.add(textFieldPathToUpdates);
-		btnChoosePathToUpdateFile = new JButton(new ImageIcon(getClass().getResource("/icons/Folder_open.png")));
-		btnChoosePathToUpdateFile.setPreferredSize(new Dimension(30, btnChoosePathToUpdateFile.getHeight()));
+		btnChoosePathToUpdateFile = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
 		panelFile.add(btnChoosePathToUpdateFile, BorderLayout.EAST);
 		addOption("Pfad zu Updates XML", panelFile);
 		
@@ -84,8 +82,7 @@ public class OptionPanel extends JPanel{
 		backgroundColorPreview.setBorder(BorderFactory.createLineBorder(Color.white));
 		backgroundColorPreview.setPreferredSize(new Dimension(50, backgroundColorPreview.getHeight()));
 		panelBackgroundColor.add(backgroundColorPreview, BorderLayout.WEST);
-		btnChooseBackgroundColor = new JButton(new ImageIcon(getClass().getResource("/icons/ColorPalette_Icon.png")));
-		btnChooseBackgroundColor.setPreferredSize(new Dimension(30, btnChooseBackgroundColor.getHeight()));
+		btnChooseBackgroundColor = new ScaledButton(getClass().getResource("/icons/ColorPalette_Icon.png"), this.getFont());
 		btnChooseBackgroundColor.setToolTipText("ColorChooser öffnen");
 		panelBackgroundColor.add(btnChooseBackgroundColor, BorderLayout.EAST);
 		addOption("Hintergrundfarbe", panelBackgroundColor);
@@ -100,8 +97,7 @@ public class OptionPanel extends JPanel{
 		secondaryBackgroundColorPreview.setBorder(BorderFactory.createLineBorder(Color.white));
 		secondaryBackgroundColorPreview.setPreferredSize(new Dimension(50, secondaryBackgroundColorPreview.getHeight()));
 		panelSecondaryBackgroundColor.add(secondaryBackgroundColorPreview, BorderLayout.WEST);
-		btnChooseSecondaryBackgroundColor = new JButton(new ImageIcon(getClass().getResource("/icons/ColorPalette_Icon.png")));
-		btnChooseSecondaryBackgroundColor.setPreferredSize(new Dimension(30, btnChooseSecondaryBackgroundColor.getHeight()));
+		btnChooseSecondaryBackgroundColor = new ScaledButton(getClass().getResource("/icons/ColorPalette_Icon.png"), this.getFont());
 		btnChooseSecondaryBackgroundColor.setToolTipText("ColorChooser öffnen");
 		panelSecondaryBackgroundColor.add(btnChooseSecondaryBackgroundColor, BorderLayout.EAST);
 		addOption("Sekundäre Hintergrundfarbe", panelSecondaryBackgroundColor);
@@ -116,8 +112,7 @@ public class OptionPanel extends JPanel{
 		foregroundColorPreview.setBorder(BorderFactory.createLineBorder(Color.white));
 		foregroundColorPreview.setPreferredSize(new Dimension(50, foregroundColorPreview.getHeight()));
 		panelForegroundColor.add(foregroundColorPreview, BorderLayout.WEST);
-		btnChooseForegroundColor = new JButton(new ImageIcon(getClass().getResource("/icons/ColorPalette_Icon.png")));
-		btnChooseForegroundColor.setPreferredSize(new Dimension(30, btnChooseForegroundColor.getHeight()));
+		btnChooseForegroundColor = new ScaledButton(getClass().getResource("/icons/ColorPalette_Icon.png"), this.getFont());
 		btnChooseForegroundColor.setToolTipText("ColorChooser öffnen");
 		panelForegroundColor.add(btnChooseForegroundColor, BorderLayout.EAST);
 		addOption("Schriftfarbe", panelForegroundColor);
@@ -132,8 +127,7 @@ public class OptionPanel extends JPanel{
 		secondaryForegroundColorPreview.setBorder(BorderFactory.createLineBorder(Color.white));
 		secondaryForegroundColorPreview.setPreferredSize(new Dimension(50, secondaryForegroundColorPreview.getHeight()));
 		panelSecondaryForegroundColor.add(secondaryForegroundColorPreview, BorderLayout.WEST);
-		btnChooseSecondaryForegroundColor = new JButton(new ImageIcon(getClass().getResource("/icons/ColorPalette_Icon.png")));
-		btnChooseSecondaryForegroundColor.setPreferredSize(new Dimension(30, btnChooseSecondaryForegroundColor.getHeight()));
+		btnChooseSecondaryForegroundColor = new ScaledButton(getClass().getResource("/icons/ColorPalette_Icon.png"), this.getFont());
 		btnChooseSecondaryForegroundColor.setToolTipText("ColorChooser öffnen");
 		panelSecondaryForegroundColor.add(btnChooseSecondaryForegroundColor, BorderLayout.EAST);
 		addOption("Sekundäre Schriftfarbe", panelSecondaryForegroundColor);
@@ -147,8 +141,7 @@ public class OptionPanel extends JPanel{
 		textFieldPathToFibUpdateFiles = new JTextField();
 		textFieldPathToFibUpdateFiles.setFont(this.getFont());
 		panelPathToFibUpdateFiles.add(textFieldPathToFibUpdateFiles);
-		btnChoosePathToFibUpdateFiles = new JButton(new ImageIcon(getClass().getResource("/icons/Folder_open.png")));
-		btnChoosePathToFibUpdateFiles.setPreferredSize(new Dimension(30, btnChoosePathToFibUpdateFiles.getHeight()));
+		btnChoosePathToFibUpdateFiles = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
 		panelPathToFibUpdateFiles.add(btnChoosePathToFibUpdateFiles, BorderLayout.EAST);
 		addOption("Pfad zu Fib-Update-Dateien", panelPathToFibUpdateFiles);
 		
@@ -159,8 +152,7 @@ public class OptionPanel extends JPanel{
 		textFieldPathToFibReleaseFiles = new JTextField();
 		textFieldPathToFibReleaseFiles.setFont(this.getFont());
 		panelPathToFibReleaseFiles.add(textFieldPathToFibReleaseFiles);
-		btnChoosePathToFibReleaseFiles = new JButton(new ImageIcon(getClass().getResource("/icons/Folder_open.png")));
-		btnChoosePathToFibReleaseFiles.setPreferredSize(new Dimension(30, btnChoosePathToFibReleaseFiles.getHeight()));
+		btnChoosePathToFibReleaseFiles = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
 		panelPathToFibReleaseFiles.add(btnChoosePathToFibReleaseFiles, BorderLayout.EAST);
 		addOption("Pfad zu Fib-Release-Dateien", panelPathToFibReleaseFiles);
 		
@@ -171,8 +163,7 @@ public class OptionPanel extends JPanel{
 		textFieldPathToAssFiles = new JTextField();
 		textFieldPathToAssFiles.setFont(this.getFont());
 		panelPathToAssFiles.add(textFieldPathToAssFiles);
-		btnChoosePathToAssFiles = new JButton(new ImageIcon(getClass().getResource("/icons/Folder_open.png")));
-		btnChoosePathToAssFiles.setPreferredSize(new Dimension(30, btnChoosePathToAssFiles.getHeight()));
+		btnChoosePathToAssFiles = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
 		panelPathToAssFiles.add(btnChoosePathToAssFiles, BorderLayout.EAST);
 		addOption("Pfad zu ASS-Dateien", panelPathToAssFiles);
 
@@ -182,8 +173,7 @@ public class OptionPanel extends JPanel{
 		textFieldPathToJamFiles = new JTextField();
 		textFieldPathToJamFiles.setFont(this.getFont());
 		panelPathToJamFiles.add(textFieldPathToJamFiles);
-		btnChoosePathToJamFiles = new JButton(new ImageIcon(getClass().getResource("/icons/Folder_open.png")));
-		btnChoosePathToJamFiles.setPreferredSize(new Dimension(30, btnChoosePathToJamFiles.getHeight()));
+		btnChoosePathToJamFiles = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
 		panelPathToJamFiles.add(btnChoosePathToJamFiles, BorderLayout.EAST);
 		addOption("Pfad zu JAM-Dateien", panelPathToJamFiles);
 		
