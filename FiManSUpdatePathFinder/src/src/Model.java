@@ -54,7 +54,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.5";
+	private static String version = "V1.6";
 	
 	private Config configFile;
 	
@@ -182,6 +182,23 @@ public class Model {
 			
 		}
 		startingData = getDataToSave();
+		
+		/*
+		//performancetest
+		int numberOfOuterRuns = 20;
+		int runs =  numberOfOuterRuns * ASSreleasess.length;
+		long totalTime = 0;
+		for (int t = 0; t < numberOfOuterRuns; t++) {
+			for (int j = 0; j < ASSreleasess.length; j++) {
+				long start = System.nanoTime();
+				getNewDescriptionPanel(ASSreleasess[j]);
+				long end = System.nanoTime();
+				System.out.println("Method A took: " + (end - start) + " ns");
+				totalTime += (end - start);
+			}
+		}
+		double averageTime = totalTime / (double) runs;
+		System.out.printf("Average time : %.0f ns%n", averageTime);*/
 	}
 	
 	private LocalDate loadDateFromPreferences() {
@@ -784,7 +801,9 @@ public class Model {
 
 	public void openDesciptionPressed(Update update) {
 		if (controller.desciptionExists()) updateModelInputs();
+		
 		controller.setDesciption(update);
+
 		controller.setDesciptionInputs(this.getUserInputs());
 		if (configFile.maintainScrollPosChckbxState == true) {
 			controller.setScrollPos(controller.getScrollPos());

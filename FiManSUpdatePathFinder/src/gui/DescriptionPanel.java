@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,12 +53,14 @@ public class DescriptionPanel extends JPanel{
 	private GridBagLayout gbl_layout;
 	private GridBagConstraints gbc_constraints;
 	private int[] spaces;
-	private ImageIcon copy_Icon;
-	private ImageIcon folder_Icon;
+	private URL copy_Icon_url;
+	private URL folder_Icon_url;
 	private Font font;
 	private Color backgroundColor;
 	private Color foregroundColor;
 	private JPanel contentPanel;
+	private ImageIcon copy_Icon;
+	private ImageIcon folder_Icon;
 	
 	protected JTextField fibPgmBibTextField;
 	protected JTextField fibDtaBibTextField;
@@ -81,6 +86,9 @@ public class DescriptionPanel extends JPanel{
 	private int[] numbering;
 	
 	private JScrollPane scrollPane;
+	
+	private int size;
+	private int imageSize;
 	
 	class MyDocumentListener implements DocumentListener {
 		
@@ -180,8 +188,22 @@ public class DescriptionPanel extends JPanel{
 		this.backgroundColor = configFile.getBackgroundColor();
 		this.foregroundColor = configFile.getForegroundColor();
 		this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		this.copy_Icon = new ImageIcon(getClass().getResource("/icons/Copy_Icon.png"));
-		this.folder_Icon = new ImageIcon(getClass().getResource("/icons/Folder_open.png"));
+		this.copy_Icon_url = getClass().getResource("/icons/Copy_Icon.png");
+		this.folder_Icon_url = getClass().getResource("/icons/Folder_open.png");
+		
+		JComboBox<String> tmpBox = new JComboBox<String>();
+		tmpBox.setFont(font);
+		this.size = (int) Math.round(tmpBox.getPreferredSize().getHeight());
+		this.imageSize = (int) (size * 0.7);
+		tmpBox = null; //just to make sure
+		
+		Image newImage = new ImageIcon(copy_Icon_url).getImage();
+		Image scaledImage = newImage.getScaledInstance(imageSize, imageSize, Image.SCALE_SMOOTH);
+		this.copy_Icon = new ImageIcon(scaledImage);
+		
+		newImage = new ImageIcon(folder_Icon_url).getImage();
+		scaledImage = newImage.getScaledInstance(imageSize, imageSize, Image.SCALE_SMOOTH);
+		this.folder_Icon = new ImageIcon(scaledImage);
 		
 		
 		this.fibPgmBibTextField = new JTextField();
@@ -357,7 +379,7 @@ public class DescriptionPanel extends JPanel{
 		gbc_constraints.gridy = gridy;
 		contentPanel.add(newPanel, gbc_constraints);
     	
-    	JButton newCopyButton = new JButton(copy_Icon);
+		ScaledButton newCopyButton = new ScaledButton(copy_Icon, size);
     	newCopyButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			
@@ -465,7 +487,8 @@ public class DescriptionPanel extends JPanel{
 		gbc_constraints.gridy = gridy;
 		contentPanel.add(newPanel, gbc_constraints);
     	
-		JButton newButton = new JButton();
+		//JButton newButton = new JButton();
+		ScaledButton newButton = new ScaledButton(size);
 		if (isFolderButton == false) {
 			newButton.setIcon(copy_Icon);
 	    	newButton.addActionListener(new ActionListener() {
@@ -671,7 +694,7 @@ public class DescriptionPanel extends JPanel{
 		gbc_constraints.gridy = gridy;
 		contentPanel.add(newPanel, gbc_constraints);
     	
-    	JButton newButton = new JButton(copy_Icon);
+		ScaledButton newButton = new ScaledButton(copy_Icon, size);
     	
     	newButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
@@ -732,7 +755,7 @@ public class DescriptionPanel extends JPanel{
 		contentPanel.add(newPanel, gbc_constraints);
     	
     	/////////only difference to addBibField()/////////
-    	JButton newCopyButton = new JButton(copy_Icon);
+		ScaledButton newCopyButton = new ScaledButton(copy_Icon, size);
     	newCopyButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			clipboard.setContents(new StringSelection(commandToCopy), null);
@@ -761,7 +784,7 @@ public class DescriptionPanel extends JPanel{
 		gbc_constraints.gridy = gridy;
 		contentPanel.add(newPanel, gbc_constraints);
     	
-    	JButton newCopyButton = new JButton(copy_Icon);
+		ScaledButton newCopyButton = new ScaledButton(copy_Icon, size);
     	newCopyButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			clipboard.setContents(new StringSelection(newTextField.getText()), null);
