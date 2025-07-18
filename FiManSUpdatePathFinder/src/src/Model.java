@@ -54,7 +54,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.6";
+	private static String version = "V1.7";
 	
 	private Config configFile;
 	
@@ -801,9 +801,7 @@ public class Model {
 
 	public void openDesciptionPressed(Update update) {
 		if (controller.desciptionExists()) updateModelInputs();
-		
 		controller.setDesciption(update);
-
 		controller.setDesciptionInputs(this.getUserInputs());
 		if (configFile.maintainScrollPosChckbxState == true) {
 			controller.setScrollPos(controller.getScrollPos());

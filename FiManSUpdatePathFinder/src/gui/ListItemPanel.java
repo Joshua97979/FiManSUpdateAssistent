@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -12,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -84,26 +84,24 @@ public class ListItemPanel extends JPanel{
 		setHighlightColor();
 		setSelectedColor();
 		
+		JComboBox<String> tmpBox = new JComboBox<String>();
+		tmpBox.setFont(font);
+		int size = (int) Math.round(tmpBox.getPreferredSize().getHeight());
+		size *= 1.8;
+		tmpBox = null; //just to make sure
 		
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Dimension dim = toolkit.getScreenSize();
-		float height = (4f/100)*dim.height;
-		preferredHeight = (int)height;
-		//preferredHeight*= 2;
-		
+		preferredHeight = size;
 		
         this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         this.setPreferredSize(new Dimension(0, preferredHeight)); //Width is overridden from outside in setInnerPanelPreferredSize().
         
         innerPanel = new JPanel(new BorderLayout());
         innerPanel.setPreferredSize(new Dimension(0, preferredHeight)); //Width is overridden from outside in setInnerPanelPreferredSize().
-        //innerPanel.setBackground(backgroundColor);
         innerPanel.setOpaque(true);
         innerPanel.setBackground(new Color(0,0,0,0));
         
         // Panel links
         innerPanelLeft = new JPanel();
-        //innerPanelLeft.setBackground(backgroundColor);
         innerPanelLeft.setOpaque(true);
         innerPanelLeft.setBackground(new Color(0,0,0,0));
         innerPanel.add(innerPanelLeft, BorderLayout.WEST);
@@ -116,7 +114,6 @@ public class ListItemPanel extends JPanel{
         
         // Panel rechts
         innerPanelRight = new JPanel();
-        //innerPanelRight.setBackground(backgroundColor);
         innerPanelRight.setOpaque(true);
         innerPanelRight.setBackground(new Color(0,0,0,0));
         innerPanel.add(innerPanelRight, BorderLayout.EAST);
@@ -130,6 +127,7 @@ public class ListItemPanel extends JPanel{
 			
 			classicChckbx = new JCheckBox("");
 			classicChckbx.setBackground(backgroundColor);
+			classicChckbx.setBorder(null);
 			innerPanelRight.add(classicChckbx);
 			checkBoxes.add(classicChckbx);
 		}
@@ -140,12 +138,12 @@ public class ListItemPanel extends JPanel{
 		innerPanelRight.add(graphicLabel);
 		JCheckBox graphicChckbx = new JCheckBox("");
 		graphicChckbx.setBackground(backgroundColor);
+		graphicChckbx.setBorder(null);
 		innerPanelRight.add(graphicChckbx);
 		checkBoxes.add(graphicChckbx);
 
 		
 		this.add(innerPanel, BorderLayout.CENTER);
-		
 		
 		mouseListener = new HoverMouseListener(this);
 		this.addMouseListener(mouseListener);
@@ -228,9 +226,9 @@ public class ListItemPanel extends JPanel{
 		return this.innerPanel.getPreferredSize();
 	}
 	
-	public void setInnerPanelPreferredSize(Dimension preferredSize) {	
-		this.setPreferredSize(new Dimension((int)preferredSize.getWidth(), preferredHeight));
-		this.innerPanel.setPreferredSize(preferredSize);
+	public void setInnerPanelPreferredWidth(int preferredWidth) {	
+		this.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+		this.innerPanel.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
 	}
 
 	static class HoverMouseListener extends MouseAdapter {

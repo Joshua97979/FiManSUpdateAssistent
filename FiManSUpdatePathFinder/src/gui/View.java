@@ -690,8 +690,7 @@ public class View extends JFrame{
 	
 	private void setPanelWidth(int newWidth) {
         for (int i = 0; i < listItems.size(); i++) {
-        	listItems.get(i).setInnerPanelPreferredSize(new Dimension(newWidth, 40));
-        	//System.out.println("new preferred width: " + listItems.get(i).getInnerInnerPanelPreferredSize().getWidth());
+        	listItems.get(i).setInnerPanelPreferredWidth(newWidth);
         	listItems.get(i).revalidate();
 		}
     }

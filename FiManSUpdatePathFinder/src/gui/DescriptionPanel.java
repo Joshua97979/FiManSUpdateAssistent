@@ -487,7 +487,6 @@ public class DescriptionPanel extends JPanel{
 		gbc_constraints.gridy = gridy;
 		contentPanel.add(newPanel, gbc_constraints);
     	
-		//JButton newButton = new JButton();
 		ScaledButton newButton = new ScaledButton(size);
 		if (isFolderButton == false) {
 			newButton.setIcon(copy_Icon);
