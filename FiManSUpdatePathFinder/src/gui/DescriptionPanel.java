@@ -90,6 +90,12 @@ public class DescriptionPanel extends JPanel{
 	private int size;
 	private int imageSize;
 	
+	private Update update;
+	
+	public Update getUpdate() {
+		return this.update;
+	}
+	
 	class MyDocumentListener implements DocumentListener {
 		
 		private Object[] inputs;
@@ -184,6 +190,7 @@ public class DescriptionPanel extends JPanel{
 	}
 	
 	public DescriptionPanel(Update update ,Font font, Config configFile) {
+		this.update = update;
 		this.font = font;
 		this.backgroundColor = configFile.getBackgroundColor();
 		this.foregroundColor = configFile.getForegroundColor();

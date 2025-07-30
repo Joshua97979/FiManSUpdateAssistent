@@ -39,8 +39,10 @@ import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -54,6 +56,7 @@ import javax.swing.SwingUtilities;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
@@ -128,6 +131,8 @@ public class View extends JFrame{
 	
 	private int maxPanelWidth;
 	private int minPanelWidth;
+	
+	private JScrollPane itemScrollPane;
 	
 	public View(Controller controller, Color backgroundColor, Color secondaryBackgroundColor, Color foregroundColor, Float fontSize, Color secondaryForegroundColor) {
 		this.controller = controller;
@@ -528,13 +533,14 @@ public class View extends JFrame{
 		listPanel.add(panelBottom, BorderLayout.CENTER);
 		panelBottom.setLayout(new BorderLayout(0, 0));
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-		panelBottom.add(scrollPane, BorderLayout.CENTER);
+		itemScrollPane = new JScrollPane();
+		disableArrowKeys(itemScrollPane);
+		itemScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+		panelBottom.add(itemScrollPane, BorderLayout.CENTER);
 		
 		listContainerNorth = new JPanel();
 		listContainerNorth.setBackground(backgroundColor); 
-		scrollPane.setViewportView(listContainerNorth);
+		itemScrollPane.setViewportView(listContainerNorth);
 		listContainerNorth.setLayout(new BorderLayout());
 		
 		listContainer = new JPanel(new GridLayout(0, 1));
@@ -670,6 +676,24 @@ public class View extends JFrame{
 	            }
 	        });
 	    }
+	}
+	
+	private static void disableArrowKeys(JScrollPane scrollPane) {
+		InputMap inputMap = scrollPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        // Dummy action that does nothing – used to block the key press
+		Action dummyAction = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Do nothing – this blocks the key
+			}
+		};
+
+		String[] arrowKeys = {"UP", "DOWN"};
+		for (String key : arrowKeys) {
+			inputMap.put(KeyStroke.getKeyStroke(key), "none_" + key);
+			scrollPane.getActionMap().put("none_" + key, dummyAction);
+		}
 	}
 	
 	public void fireDividerPropertyChange() { //triggers PropertyChangeListener and is called in showPath()
@@ -1382,8 +1406,17 @@ public class View extends JFrame{
 		currentSelectedPanel.makeSelected();
 		currentSelectedPanel.requestFocus(); //Remove potential focus from ComboBox
 		openDesciptionPressed(currentSelectedPanel);
+		jumpToItem(listItems.get(index));
 	}
 
+	private void jumpToItem(ListItemPanel targetItem) {
+		//TODO das funktioniert noch nicht richtig bei sehr vielen Panels
+		SwingUtilities.invokeLater(() -> {
+			Rectangle bounds = targetItem.getBounds();
+			listContainer.scrollRectToVisible(bounds);
+		});
+	}
+	
 	public void goUp() {
 		if (listItems.size() == 1) return;
 		removeItemHighlighted();
@@ -1401,6 +1434,7 @@ public class View extends JFrame{
 		currentSelectedPanel.makeSelected();
 		currentSelectedPanel.requestFocus(); //Remove potential focus from ComboBox
 		openDesciptionPressed(currentSelectedPanel);
+		jumpToItem(listItems.get(index));
 	}
 
 	public void goControlDown() {
@@ -1413,6 +1447,7 @@ public class View extends JFrame{
 		currentSelectedPanel.makeSelected();
 		currentSelectedPanel.requestFocus(); //Remove potential focus from ComboBox
 		openDesciptionPressed(currentSelectedPanel);
+		jumpToItem(listItems.get(listItems.size()-1));
 	}
 
 	public void goControlUp() {
@@ -1425,5 +1460,6 @@ public class View extends JFrame{
 		currentSelectedPanel.makeSelected();
 		currentSelectedPanel.requestFocus(); //Remove potential focus from ComboBox
 		openDesciptionPressed(currentSelectedPanel);
+		jumpToItem(listItems.get(0));
 	}
 }

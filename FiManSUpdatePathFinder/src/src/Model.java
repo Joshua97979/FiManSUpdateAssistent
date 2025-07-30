@@ -54,7 +54,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.7";
+	private static String version = "V1.8";
 	
 	private Config configFile;
 	
@@ -91,6 +91,8 @@ public class Model {
 	Map<String, String> userInputs = new HashMap<>();
 	Map<Update, ArrayList<Boolean>> boxStates = new HashMap<>();
 	
+	private ArrayList<DescriptionPanel> createdDescriptionPanels;
+	
 	private static final String[] inputs = {"fibPgmBib", "fibDtaBib", "fibSrcBib", "assDtaBib", "assPgmBib", "aesPgmBib", "aesDtaBib", "optName", "imgClgName", "imgClgPath", "jdkVersion",
 			   "osVersion", "tomCatDownCommand", "tomCatUpCommand", "tomCatVersion", "tomCatJobName", "fibInsDirPath", "tomCatInsDirPath", "fibModBib"};
 	
@@ -101,6 +103,8 @@ public class Model {
 	public Model(){
 		LAST_USED_FOLDER_KEY = "lastUsedFolder";
 		LAST_PROGRAM_START_KEY = "lastProgramStart";
+		
+		createdDescriptionPanels = new ArrayList<DescriptionPanel>();
 		
 		ASSreleasess = new Update[] {
 				new Update("ASS", 5810, "25.06.2018"), 
@@ -1415,6 +1419,12 @@ public class Model {
 	}
 
 	public DescriptionPanel getNewDescriptionPanel(Update update) {
+		for (DescriptionPanel panel : createdDescriptionPanels) {
+			if (panel.getUpdate().equals(update)) {
+				return panel;
+			}
+		}
+		
 		DescriptionPanel newDescriptionPanel = null;
 		if (update.getType().equals("ASS")) {
 			if (Arrays.asList(ASSreleasess).contains(update)) {
@@ -1431,6 +1441,7 @@ public class Model {
 				newDescriptionPanel = new FIBdescriptionPanel(update, controller.getFont(), configFile);
 			}
 		}
+		createdDescriptionPanels.add(newDescriptionPanel);
 		return newDescriptionPanel;
 	}
 
