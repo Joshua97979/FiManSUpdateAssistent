@@ -667,7 +667,7 @@ public class View extends JFrame{
 		SplitPaneUI spui = this.splitPane.getUI();
 	    if (spui instanceof BasicSplitPaneUI) {
 	        ((BasicSplitPaneUI) spui).getDivider().addMouseListener(new MouseAdapter() {
-
+	        	
 	            @Override
 	            public void mouseClicked(MouseEvent arg0) {
 	                if (arg0.getClickCount() == 2) {
@@ -680,15 +680,15 @@ public class View extends JFrame{
 	
 	private static void disableArrowKeys(JScrollPane scrollPane) {
 		InputMap inputMap = scrollPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        // Dummy action that does nothing – used to block the key press
+		
+		// Dummy action that does nothing - used to block the key press
 		Action dummyAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Do nothing – this blocks the key
+				// Do nothing - this blocks the key
 			}
 		};
-
+		
 		String[] arrowKeys = {"UP", "DOWN"};
 		for (String key : arrowKeys) {
 			inputMap.put(KeyStroke.getKeyStroke(key), "none_" + key);
@@ -834,7 +834,7 @@ public class View extends JFrame{
 		tmpPanel.setLayout(new BorderLayout());
 		tmpPanel.setBackground(backgroundColor);
 		
-		JLabel label = new JLabel("<html><body><div style='text-align: center;'>Bitte ein Update aus dem linken Bereich auswählen.<br><br><br><br>FiManS Update Assistent<br>By Joshua Froitzheim 2024</body></html>");
+		JLabel label = new JLabel("<html><body><div style='text-align: center;'>Bitte ein Update aus dem linken Bereich auswählen.<br><br><br><br>FiManS Update Assistent<br>By Joshua Froitzheim 2025</body></html>");
 		label.setForeground(foregroundColor);
 		label.setFont(this.getFont());
 		label.setHorizontalAlignment(JLabel.CENTER);
@@ -1410,7 +1410,6 @@ public class View extends JFrame{
 	}
 
 	private void jumpToItem(ListItemPanel targetItem) {
-		//TODO das funktioniert noch nicht richtig bei sehr vielen Panels
 		SwingUtilities.invokeLater(() -> {
 			Rectangle bounds = targetItem.getBounds();
 			listContainer.scrollRectToVisible(bounds);

@@ -54,7 +54,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.8";
+	private static String version = "V1.8.1";
 	
 	private Config configFile;
 	
@@ -1571,7 +1571,7 @@ public class Model {
 		controller.setDesciptionInputs(userInputs);
 		controller.setTypeComboBox(null); //This calls typeChanged() and clears many fields. Be sure to call it before getDataToSave()!
 		startingData = getDataToSave();
-		controller.setSplitPaneDivider(1.0d);
+		controller.removeDescriptionPanel(); //SplitPaneDividerPos is set in here
 	}
 	
 	public void setGraficCheckBx(ArrayList<Update> selectedUpdates, boolean newState) {
