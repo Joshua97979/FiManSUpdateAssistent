@@ -24,7 +24,7 @@ public class JAMdescriptionPanel extends FimansDescriptionPanel{
     	String newDate = date.substring(6, 10);
     	newDate += date.substring(3, 5);
     	newDate += date.substring(0, 2);
-    	String path = configFile.pathToAssFiles + "\\AJI"+ update.getVersion() +"_" + newDate;
+    	String path = configFile.pathToJamFiles + "\\JJI"+ update.getVersion() +"_" + newDate;
     	this.addOpenFolderButtonAndCopyableText(text + path, path);
     	
     	this.addSpace(50);
