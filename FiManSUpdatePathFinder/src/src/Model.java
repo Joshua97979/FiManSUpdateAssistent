@@ -54,7 +54,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.8.3";
+	private static String version = "V1.8.4";
 	
 	private Config configFile;
 	
@@ -167,6 +167,7 @@ public class Model {
 		handleInitUpdates();
 		controller.setTypes(types);
 		
+		
 		if (configFile.updatesChckbxState) {
 			LocalDate lastProgramStart = loadDateFromPreferences();
 			
@@ -186,6 +187,7 @@ public class Model {
 			
 		}
 		startingData = getDataToSave();
+		
 		
 		/*
 		//performancetest
@@ -1714,6 +1716,7 @@ public class Model {
 					JOptionPane.showMessageDialog(controller.getParentForPositionOnly(), "Ungültige Datei gewählt.");
 				}
 			}
+			saveValueToPreferences(LAST_PROGRAM_START_KEY, LocalDate.now().minusDays(1).toString()); // force checkForNewUpdatesFromVEDA();
 		}
 		
 		setPathToUpdates(newFile.getAbsolutePath());
