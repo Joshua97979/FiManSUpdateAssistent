@@ -109,7 +109,9 @@ public class FIBdescriptionPanel extends FimansDescriptionPanel {
     	newDate += date.substring(0, 2);
     	String vins = "FIB" + update.getVersion() + newDate + ".VINS";
     	
-    	this.addLabel(savf + " und " + vins + " kopieren nach vswappl/ptf.");
+    	path = configFile.pathToFibUpdateFiles + "\\FIB" + update.getVersion();
+    	this.addOpenFolderButtonAndCopyableText(new Object[] {savf + " und " + vins + " kopieren."}, new Object[] {path});
+    	this.addButtonAndCopyableText(new Object[] {"nach: ", fibInsDirPathTextField}, new Object[] {fibInsDirPathTextField}, true, false, true);
     	
     	this.addLabel("Menü-Weg: 40.  VEDA SE Basis -> 83.  Installationen / Updates -> 2.  Update installieren");
     	String copyText = "FIB\n" + update.getVersion() + "\n" + update.getReleasedate();

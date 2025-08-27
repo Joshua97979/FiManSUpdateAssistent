@@ -171,6 +171,7 @@ public class FimansDescriptionPanel extends DescriptionPanel{
 		this.addBoldLabel(getNbr() + " Betriebssystem-Version:");
     	osTextField = this.addButtonAndTextField("DSPDTAARA DTAARA(QSS1MRI)");
     	this.addLabel("(Bei allem unter V6R1M0 sollte man hellhörig werden)");
+    	this.addLabel("(Es wird mind. V7R3M0 vorausgesetzt ab FIB Version: 6115 bzw. 6017 bzw. 5828 bzw. 5728)");
 	}
 	
 	public void addSection_JdkVersion() {

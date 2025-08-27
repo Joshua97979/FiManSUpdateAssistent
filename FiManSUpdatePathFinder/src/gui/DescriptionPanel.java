@@ -105,11 +105,13 @@ public class DescriptionPanel extends JPanel{
 		private boolean spaceAfter;
 		private boolean hideIfEmpty;
 		private JButton copyButton;
+		private boolean isVSWAPPL;
 		
 		public MyDocumentListener(Object[] inputs, JLabel output, boolean quote, boolean spaceBefore, boolean spaceAfter, boolean hideIfEmpty) throws Exception {this(inputs, ((Object) output), quote, spaceBefore, spaceAfter, hideIfEmpty);}
 		public MyDocumentListener(Object[] inputs, JTextField output, boolean quote, boolean spaceBefore, boolean spaceAfter, boolean hideIfEmpty) throws Exception {this(inputs, ((Object) output), quote, spaceBefore, spaceAfter, hideIfEmpty);}
 		private MyDocumentListener(Object[] inputs, Object output, boolean quote, boolean spaceBefore, boolean spaceAfter, boolean hideIfEmpty) throws Exception {this(inputs, ((Object) output), quote, spaceBefore, spaceAfter, hideIfEmpty, null);}
-		private MyDocumentListener(Object[] inputs, Object output, boolean quote, boolean spaceBefore, boolean spaceAfter, boolean hideIfEmpty, JButton button) throws Exception {
+		private MyDocumentListener(Object[] inputs, Object output, boolean quote, boolean spaceBefore, boolean spaceAfter, boolean hideIfEmpty, JButton button) throws Exception {this(inputs, ((Object) output), quote, spaceBefore, spaceAfter, hideIfEmpty, button, false);}
+		private MyDocumentListener(Object[] inputs, Object output, boolean quote, boolean spaceBefore, boolean spaceAfter, boolean hideIfEmpty, JButton button, boolean isVSWAPPL) throws Exception {
 			this.output = output;
 			this.inputs = inputs;
 			this.quote = quote;
@@ -117,6 +119,7 @@ public class DescriptionPanel extends JPanel{
 			this.spaceAfter = spaceAfter;
 			this.hideIfEmpty = hideIfEmpty;
 			this.copyButton = button;
+			this.isVSWAPPL = isVSWAPPL;
 		}
 		
 		private boolean allInputsEmpty(Object[] inputs) {
@@ -136,14 +139,21 @@ public class DescriptionPanel extends JPanel{
 		    	if (obj instanceof String) {
 		    		displayedText += (String)obj;
 				} else if (obj instanceof JTextField) {
-					if (((JTextField) obj).getText().length() > 0) {
-						if (spaceBefore) {displayedText += " ";}
-						if (quote) {
-							displayedText += "\"" + ((JTextField) obj).getText() + "\"";
-						} else {
-							displayedText += ((JTextField) obj).getText();
+					if (isVSWAPPL) {
+						String text = ((JTextField) obj).getText();
+						text = cut(text);
+						text = addVswappl(text);
+						displayedText += text;
+					} else {
+						if (((JTextField) obj).getText().length() > 0) {
+							if (spaceBefore) {displayedText += " ";}
+							if (quote) {
+								displayedText += "\"" + ((JTextField) obj).getText() + "\"";
+							} else {
+								displayedText += ((JTextField) obj).getText();
+							}
+							if (spaceAfter) {displayedText += " ";}
 						}
-						if (spaceAfter) {displayedText += " ";}
 					}
 				}
 		    }
@@ -487,6 +497,8 @@ public class DescriptionPanel extends JPanel{
 	public void addButtonAndCopyableText(Object[] displayedText, Object[] copyableTextOrFolderPath, boolean isFolderButton) {
 		addButtonAndCopyableText(displayedText, copyableTextOrFolderPath, isFolderButton, false);}
 	public void addButtonAndCopyableText(Object[] inputs, Object[] copyableTextOrFolderPath, boolean isFolderButton, boolean hideIfEmpty) {
+		addButtonAndCopyableText(inputs, copyableTextOrFolderPath, isFolderButton, hideIfEmpty, false);}
+	public void addButtonAndCopyableText(Object[] inputs, Object[] copyableTextOrFolderPath, boolean isFolderButton, boolean hideIfEmpty, boolean isVSWAPPL) {
 		JPanel newPanel = new JPanel();
 		newPanel.setBackground(backgroundColor);
 		newPanel.setBorder(null);
@@ -519,13 +531,20 @@ public class DescriptionPanel extends JPanel{
 	    	newButton.addActionListener(new ActionListener() {
 	    		public void actionPerformed(ActionEvent e) {
 	    			String folderPathStr = "";
-			    	for (Object obj : copyableTextOrFolderPath) {
-				    	if (obj instanceof String) {
-				    		folderPathStr += (String)obj;
-						} else if (obj instanceof JTextField) {
-							folderPathStr += ((JTextField)obj).getText();
-						}
-				    }
+	    			if (isVSWAPPL) {
+	    				folderPathStr = fibInsDirPathTextField.getText();
+	    				folderPathStr = cut(folderPathStr);
+	    				folderPathStr = addVswappl(folderPathStr);
+					} else {
+						for (Object obj : copyableTextOrFolderPath) {
+					    	if (obj instanceof String) {
+					    		folderPathStr += (String)obj;
+							} else if (obj instanceof JTextField) {
+								folderPathStr += ((JTextField)obj).getText();
+							}
+					    }
+					}
+			    	
 	    			try {
 						Desktop.getDesktop().open(new File(folderPathStr));
 					} catch (IllegalArgumentException e1) {
@@ -544,8 +563,15 @@ public class DescriptionPanel extends JPanel{
 	    	for (Object obj : inputs) {
 		    	if (obj instanceof String) {
 		    		displayedTextStr += (String)obj;
-				} else if (obj instanceof JTextField) {	
-					displayedTextStr += ((JTextField)obj).getText(); //TODO necessary?
+				} else if (obj instanceof JTextField) {
+					if (isVSWAPPL) {
+						String text = ((JTextField) obj).getText();
+						text = cut(text);
+						text = addVswappl(text);
+						displayedTextStr += text;
+					} else {
+						displayedTextStr += ((JTextField)obj).getText(); // Applies, for example, when loading data where the respective JTextField is empty.
+					}
 				}
 		    }
     	} else {
@@ -566,8 +592,12 @@ public class DescriptionPanel extends JPanel{
     	for (Object textField : inputs) {
 	    	if (textField instanceof JTextField) {
 	    		try {
-					((JTextField) textField).getDocument().addDocumentListener(new MyDocumentListener(inputs, newTextField, false, false, false, hideIfEmpty, newButton));
-				} catch (Exception e1) {e1.printStackTrace();}
+	    			if (isVSWAPPL) {
+	    				((JTextField) textField).getDocument().addDocumentListener(new MyDocumentListener(inputs, newTextField, false, false, false, hideIfEmpty, newButton, true));
+	    			} else {
+	    				((JTextField) textField).getDocument().addDocumentListener(new MyDocumentListener(inputs, newTextField, false, false, false, hideIfEmpty, newButton));
+	    			}
+	    		} catch (Exception e1) {e1.printStackTrace();}
 			}
 	    }
     	
@@ -957,5 +987,22 @@ public class DescriptionPanel extends JPanel{
 			numbering[i] = 0;
 		}
 		numbering[index]++;
+	}
+	
+	private String addVswappl(String path) {
+		return path += "vswappl\\ptf";
+	}
+	
+	private String cut(String path) {
+		String marker = "home\\";
+        int index = path.indexOf(marker);
+
+        String result;
+        if (index != -1) {
+            result = path.substring(0, index + marker.length());
+        } else {
+            result = "";
+        }
+        return result;
 	}
 }

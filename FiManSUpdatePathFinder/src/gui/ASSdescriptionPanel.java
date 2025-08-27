@@ -114,7 +114,13 @@ public class ASSdescriptionPanel extends FimansDescriptionPanel{
     	newDate += date.substring(0, 2);
     	String vins = "ASS" + update.getVersion() + newDate + ".VINS";
     	
-    	this.addLabel(savf + " und " + vins + " kopieren nach vswappl/ptf.");
+    	date = update.getReleasedate();
+    	newDate = date.substring(6, 10);
+    	newDate += date.substring(3, 5);
+    	newDate += date.substring(0, 2);
+    	path = configFile.pathToAssFiles + "\\AJI"+ update.getVersion() +"_" + newDate;
+    	this.addOpenFolderButtonAndCopyableText(new Object[] {savf + " und " + vins + " kopieren."}, new Object[] {path});
+    	this.addButtonAndCopyableText(new Object[] {"nach: ", fibInsDirPathTextField}, new Object[] {fibInsDirPathTextField}, true, false, true);
     	
     	this.addLabel("Menü-Weg: 40.  VEDA SE Basis -> 83.  Installationen / Updates -> 2.  Update installieren");
     	String copyText = "ASS\n" + update.getVersion() + "\n" + update.getReleasedate();
