@@ -385,10 +385,10 @@ public class View extends JFrame{
 		}
 		setTitle("FiManS Update Assistent");
 		try {
-			BufferedImage image = ImageIO.read(getClass().getClassLoader().getResource("pictures/fimans_logo_FI.png"));
+			BufferedImage image = ImageIO.read(getClass().getClassLoader().getResource("pictures/fimans_logo_FI_neu.png"));
 		    super.setIconImage(image);
 		} catch (Exception e) {
-			showMessageDialog("kein Bild an Pfad pictures/fimans_logo_FI.png gefunden!\n\n" + e.toString());
+			showMessageDialog("kein Bild an Pfad pictures/fimans_logo_FI_neu.png gefunden!\n\n" + e.toString());
 			System.exit(0);
 		}
 		
