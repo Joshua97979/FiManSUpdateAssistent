@@ -2,12 +2,13 @@ package gui;
 import java.awt.Font;
 
 import src.Config;
+import src.ShowModListListener;
 import src.Update;
 @SuppressWarnings("serial")
 public class FIBdescriptionPanel extends FimansDescriptionPanel {
 	
-	public FIBdescriptionPanel(Update update, Font font, Config configFile) {
-		super(update, font, configFile);
+	public FIBdescriptionPanel(Update update, Font font, Config configFile, ShowModListListener showModListListener) {
+		super(update, font, configFile, showModListListener);
 		
     	this.addSpace(30);
     	

@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,12 +39,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import src.Config;
+import src.ShowModListListener;
 import src.Update;
 
 @SuppressWarnings("serial")
@@ -91,6 +94,10 @@ public class DescriptionPanel extends JPanel{
 	private int imageSize;
 	
 	private Update update;
+	
+	protected JTextArea modListOutput;
+	protected String pathToVersionCSV;
+	protected String pathToParentOfVersionCSV;
 	
 	public Update getUpdate() {
 		return this.update;
@@ -207,6 +214,12 @@ public class DescriptionPanel extends JPanel{
 		this.clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		this.copy_Icon_url = getClass().getResource("/icons/Copy_Icon.png");
 		this.folder_Icon_url = getClass().getResource("/icons/Folder_open.png");
+		this.pathToVersionCSV = configFile.getPathToVersionCSV();
+		try {
+			this.pathToParentOfVersionCSV = configFile.getPathToParentOfVersionCSV();
+		} catch (FileNotFoundException e) {
+			this.pathToParentOfVersionCSV = "";
+		}
 		
 		JComboBox<String> tmpBox = new JComboBox<String>();
 		tmpBox.setFont(font);
@@ -271,6 +284,8 @@ public class DescriptionPanel extends JPanel{
     	gbc_constraints.insets = new Insets(0, 0, 5, 0);
     	gbc_constraints.fill = GridBagConstraints.VERTICAL;
     	gbc_constraints.gridx = 1;
+    	
+    	this.modListOutput = new JTextArea();
 	}
 	
 	public void jumpToLabel(JLabel targetLabel) {
@@ -1004,5 +1019,57 @@ public class DescriptionPanel extends JPanel{
             result = "";
         }
         return result;
+	}
+	
+	public void addModListButton(ShowModListListener showModListListener) {
+		addModListButton(this.font, showModListListener);
+	}
+	
+	public void addModListButton(Font font, ShowModListListener showModListListener) {
+		JPanel newPanel = new JPanel();
+		newPanel.setBackground(backgroundColor);
+		newPanel.setBorder(null);
+    	
+		gbc_constraints.gridy = gridy;
+		contentPanel.add(newPanel, gbc_constraints);
+    	
+		JButton newButton = new JButton("Liste Generieren");
+		newButton.setFont(font);
+    	
+    	newButton.addActionListener(showModListListener);
+    	
+    	newButton.setBackground(backgroundColor);
+    	newPanel.add(newButton);
+		
+		gridy++;
+		resizeScrollMax();
+	}
+	
+	public JTextArea addModListOutput() {
+		return addModListOutput(this.font);
+	}
+	
+	public JTextArea addModListOutput(Font font) {
+		JTextArea output = new JTextArea();
+		output.setFont(font);
+		output.setForeground(foregroundColor);
+		output.setColumns(80);
+		output.setBackground(null);
+		output.setBorder(null);
+		output.setEditable(false);
+		output.setLineWrap(true);
+		output.setWrapStyleWord(true);
+		output.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+		output.setFont(new Font("Consolas", Font.PLAIN, this.font.getSize())); //monospace font for fixed-width
+    	gbc_constraints.gridy = gridy;
+    	contentPanel.add(output, gbc_constraints);
+    	
+    	gridy++;
+    	resizeScrollMax();
+    	return output;
+	}
+
+	public void setModListOutput(String output) {
+		this.modListOutput.setText(output);
 	}
 }

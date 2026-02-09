@@ -4,13 +4,17 @@ import java.awt.Font;
 import javax.swing.JLabel;
 
 import src.Config;
+import src.ShowModListListener;
 import src.Update;
 
 @SuppressWarnings("serial")
 public class FimansDescriptionPanel extends DescriptionPanel{
 	
-	public FimansDescriptionPanel(Update update ,Font font, Config configFile) {
+	private ShowModListListener showModListListener;
+	
+	public FimansDescriptionPanel(Update update ,Font font, Config configFile, ShowModListListener showModListListener) {
 		super(update, font, configFile);
+		this.showModListListener = showModListListener;
 	}
 
 	public void addSection_FibInsDirPath() {
@@ -112,6 +116,21 @@ public class FimansDescriptionPanel extends DescriptionPanel{
     	this.addLabel("Unterpunkte beachten unter:");
     	this.addButtonAndCopyableText("\"2 Übersicht der im Update enthaltenen Objekte und Quellen\"", "2 Übersicht der im Update enthaltenen Objekte und Quellen");
     	this.addCopyableText(new Object[] {"Anheben in: ", fibModBibTextField}, true);
+    	
+    	this.addSpace(30);
+    	this.addLabel("Betroffene, angepasste Programme ermitteln:");
+    	this.addLabel("Quelle für Upadteveränderungen (Einstellbar in den Optionen):");
+    	String csvPath = "";
+    	if (!this.pathToVersionCSV.trim().isEmpty()) {
+    		csvPath = "\"" + this.pathToVersionCSV + "\"";
+		} else {
+			csvPath = "Noch keine angegeben!";
+		}
+    	this.addButtonAndCopyableText(new Object[] {csvPath}, new Object[] {this.pathToParentOfVersionCSV}, true);
+    	this.addButtonAndLabel("Hinweis: CSV-Datei am besten vor jeder Generierung über JFR/FTVERX exportieren und ersetzen.", "call JFR/FTVERX");
+    	
+    	this.addModListButton(showModListListener);
+    	this.modListOutput = this.addModListOutput();
 	}
 	
 	public void addSection_CompanySpecificRecordTypes () {
@@ -129,7 +148,7 @@ public class FimansDescriptionPanel extends DescriptionPanel{
 	public void addSection_CheckForSuccessfulInstallation() {
 		this.addBoldLabel(getNbr() + " Prüfung auf erfolgreiche Installation:");
 		this.addLabel("Als erstes kann man die Versionsnummer im GreenScreen und/oder in der version.properties");
-		this.addLabel("überprüfen und nachschauen, ob das Programm diese mit der neuen Nummer ausgetuscht hat.");
+		this.addLabel("überprüfen und nachschauen, ob das Programm diese mit der neuen Nummer ausgetauscht hat.");
 		this.addSpace(50);
 		
 		this.addBoldLabel("Bei der Installation macht das Programm manchmal Fehler:");

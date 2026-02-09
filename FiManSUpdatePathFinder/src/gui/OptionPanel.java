@@ -27,16 +27,17 @@ public class OptionPanel extends JPanel{
 	private Color backgroundColor, foregroundColor;
 	private JPanel centerContentPanel;
 	
-	private JTextField textFieldPathToUpdates, textFieldPathToFibUpdateFiles, textFieldPathToFibReleaseFiles, textFieldPathToAssFiles, textFieldPathToJamFiles;
+	private JTextField textFieldPathToUpdates, textFieldPathToFibUpdateFiles, textFieldPathToFibReleaseFiles, textFieldPathToAssFiles, 
+	textFieldPathToJamFiles, textFieldPathToVersionCSV;
 	
 	public JTextField textFieldBackgroundColor, textFieldSecondaryBackgroundColor, textFieldForegroundColor,
 		textFieldSecondaryForegroundColor;
 	public JSpinner spinnerFontSize;
 	public JButton btnSave, btnCancel, btnChoosePathToUpdateFile, btnCheckForVedaUpdatesNow, btnChoosePathToFibUpdateFiles, btnChoosePathToFibReleaseFiles,
-		btnChoosePathToAssFiles, btnChoosePathToJamFiles;
+		btnChoosePathToAssFiles, btnChoosePathToJamFiles, btnChoosePathToVersionCSV,
+		btnChooseBackgroundColor, btnChooseSecondaryBackgroundColor, btnChooseForegroundColor, btnChooseSecondaryForegroundColor;
 	public JLabel lblBackgroundColor, lblForegroundColor;
 	public JCheckBox chckbxUpdatesCheck, chckbxOptionalUpdates, chckbxMaintainScrollPos;
-	public JButton btnChooseBackgroundColor, btnChooseSecondaryBackgroundColor, btnChooseForegroundColor, btnChooseSecondaryForegroundColor;
 	public JPanel backgroundColorPreview, secondaryBackgroundColorPreview, foregroundColorPreview, secondaryForegroundColorPreview;
 	
 	
@@ -57,7 +58,7 @@ public class OptionPanel extends JPanel{
 	private void createGui() {
 		
 		this.setLayout(new BorderLayout(0, 0));
-		this.add(createAndGetNothPanel(), BorderLayout.NORTH);
+		this.add(createAndGetNorthPanel(), BorderLayout.NORTH);
 		this.add(createAndGetSouthPanel(), BorderLayout.SOUTH);
 		this.add(createAndGetEmptyCenterPanel(), BorderLayout.CENTER);
 		
@@ -202,6 +203,17 @@ public class OptionPanel extends JPanel{
 		
 		
 		
+		JPanel panelPathToVersionCSV = new JPanel();
+		panelPathToVersionCSV.setLayout(new BorderLayout(0, 0));
+		textFieldPathToVersionCSV = new JTextField();
+		textFieldPathToVersionCSV.setFont(this.getFont());
+		panelPathToVersionCSV.add(textFieldPathToVersionCSV);
+		btnChoosePathToVersionCSV = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
+		panelPathToVersionCSV.add(btnChoosePathToVersionCSV, BorderLayout.EAST);
+		addOption("Pfad zu Versions-CSV", panelPathToVersionCSV);
+		
+		
+		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.LINE_END;
@@ -210,7 +222,7 @@ public class OptionPanel extends JPanel{
 		centerContentPanel.add(Box.createGlue(), c);
 	}
 	
-	private JPanel createAndGetNothPanel() {
+	private JPanel createAndGetNorthPanel() {
 		JPanel panelNorth = new JPanel();
 		Font boldFont = this.getFont().deriveFont(Font.BOLD);
 		JLabel lblTitel = new JLabel("Einstellungen");
@@ -358,5 +370,13 @@ public class OptionPanel extends JPanel{
 		}
 	}
 	
+	public String getTextFieldPathToVersionCSV() {
+		return this.textFieldPathToVersionCSV.getText();
+	}
 	
+	public void setTextFieldPathToVersionCSV(String path) {
+		if (path != null && path.length() > 0) {
+			this.textFieldPathToVersionCSV.setText(path);
+		}
+	}
 }

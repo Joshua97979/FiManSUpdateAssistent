@@ -41,6 +41,8 @@ public class Config {
 	private Color secondaryForegroundColor;
 	private String defaultSecondaryForegroundColor = "#000000";
 	
+	private String pathToVersionCSV;
+	
 	public Config(String pathToConfigFile) throws ConfigEntryNotFoundException, IllegalColorException, ConfigWriteException, ConfigDeletionException {
 		
 		configFile = new File(pathToConfigFile);
@@ -60,6 +62,8 @@ public class Config {
 			this.pathToFibReleaseFiles = "F:\\FiManS Team\\Releases\\A_FIB";
 			this.pathToAssFiles = "F:\\FiManS Team\\Releases\\A_ASS";
 			this.pathToJamFiles = "F:\\FiManS Team\\Releases\\A_JUMP";
+			
+			this.pathToVersionCSV = "";
 			
 			saveToFile();
 		}
@@ -190,8 +194,16 @@ public class Config {
 			pathToJamFiles = textBetween;
 		}
 		
+		//////////////////////pathToVersionCSV//////////////////////////////
+		textBetween = getTextBetween("pathToVersionCSV", content);
+		if (textBetween != null) {
+			pathToVersionCSV = textBetween;
+		} else {
+			pathToVersionCSV = "";
+		}
 		
 		
+
 		for (String element : elements) {
 			if (getTextBetween(element, content) == null) {
 				throw new ConfigEntryNotFoundException(element, configFile.getAbsolutePath());
@@ -248,6 +260,7 @@ public class Config {
 			writer.write("<pathToFibReleaseFiles>"+ this.pathToFibReleaseFiles +"</pathToFibReleaseFiles>\n");
 			writer.write("<pathToAssFiles>"+ this.pathToAssFiles +"</pathToAssFiles>\n");
 			writer.write("<pathToJamFiles>"+ this.pathToJamFiles +"</pathToJamFiles>\n");
+			writer.write("<pathToVersionCSV>"+ this.pathToVersionCSV +"</pathToVersionCSV>\n");
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
@@ -338,5 +351,21 @@ public class Config {
 	public void setPathToUpdates(String pathToUpdates) throws FileNotFoundException {
 		if (!new File(pathToUpdates).isFile()) {throw new FileNotFoundException("Keine Datei an angegebenem Pfad gefunden:\n" + pathToUpdates);}
 		this.pathToUpdates = pathToUpdates;
+	}
+	
+	public String getPathToVersionCSV() {
+		return this.pathToVersionCSV;
+	}
+
+	public void setPathToVersionCSV(String pathToVersionCSV) throws FileNotFoundException {
+		if (!new File(pathToVersionCSV).isFile()) {throw new FileNotFoundException("Keine Datei an angegebenem Pfad gefunden:\n" + pathToVersionCSV);}
+		this.pathToVersionCSV = pathToVersionCSV;
+	}
+
+	public String getPathToParentOfVersionCSV() throws FileNotFoundException {
+		File versionCSV = new File(pathToVersionCSV);
+		if (!versionCSV.isFile()) {throw new FileNotFoundException("Keine Datei an angegebenem Pfad gefunden:\n" + pathToVersionCSV);}
+
+		return versionCSV.getParent();
 	}
 }

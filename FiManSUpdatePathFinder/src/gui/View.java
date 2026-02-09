@@ -13,6 +13,7 @@ import Exceptions.OriginalStateNotFoundException;
 import Exceptions.PassedStateNotFoundException;
 import Exceptions.StateAmountException;
 import src.Controller;
+import src.RowPair;
 import src.Update;
 
 import java.awt.BorderLayout;
@@ -35,6 +36,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.imageio.ImageIO;
@@ -1094,6 +1096,42 @@ public class View extends JFrame{
 		this.insFibUpdateComboBox.setSelectedIndex(index);
 	}
 	
+	public String getFibModBib() {
+		String fibModBib = "";
+		if (this.descriptionPanel != null) fibModBib = descriptionPanel.getTextfelds().get("fibModBib");
+		return fibModBib;
+	}
+	
+	public void showModListInput(ModListPanel modListPanel) {
+		getContentPane().remove(mainPanel);
+		
+		modListPanel.btnCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getContentPane().remove(modListPanel);
+				getContentPane().add(mainPanel);
+				getContentPane().validate();
+				getContentPane().repaint();
+			}
+		});
+		
+		modListPanel.btnConfirm.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				List<RowPair> input = modListPanel.getList();
+				getContentPane().remove(modListPanel);
+				getContentPane().add(mainPanel);
+				getContentPane().validate();
+				getContentPane().repaint();
+				controller.generateModListOutput(input);
+			}
+		});
+		
+		getContentPane().add(modListPanel);
+		getContentPane().validate();
+		getContentPane().repaint();
+	}
+	
 	private void showOptions() {
 		getContentPane().remove(mainPanel);
 		
@@ -1222,6 +1260,13 @@ public class View extends JFrame{
 				} catch (Exception e2) {
 					optionPanel.secondaryForegroundColorPreview.setBackground(Color.black);
 				}	
+			}
+		});
+		
+		optionPanel.btnChoosePathToVersionCSV.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String path = controller.getPathToVersionCSV();
+				optionPanel.setTextFieldPathToVersionCSV(path);
 			}
 		});
 		
@@ -1460,5 +1505,10 @@ public class View extends JFrame{
 		currentSelectedPanel.requestFocus(); //Remove potential focus from ComboBox
 		openDesciptionPressed(currentSelectedPanel);
 		jumpToItem(listItems.get(0));
+	}
+
+	public void setModListOutput(String output) {
+		if (this.descriptionPanel == null) return;
+		this.descriptionPanel.setModListOutput(output);
 	}
 }

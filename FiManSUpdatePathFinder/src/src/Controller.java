@@ -5,12 +5,14 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import Exceptions.PassedStateNotFoundException;
 import gui.DescriptionPanel;
+import gui.ModListPanel;
 import gui.OptionPanel;
 import gui.View;
 
@@ -370,5 +372,29 @@ public class Controller {
 	
 	public String getPathToJam() {
 		return model.getPathToJam();
+	}
+	
+	public void showModListInput(ModListPanel modListPanel) {
+		view.showModListInput(modListPanel);
+	}
+
+	public void generateModListOutput(List<RowPair> input) {
+		model.generateModListOutput(input);
+	}
+
+	public String getFibModBib() {
+		return view.getFibModBib();
+	}
+
+	public void openModListInput() {
+		model.openModListInput();
+	}
+
+	public void setModListOutput(String output) {
+		view.setModListOutput(output);
+	}
+
+	public String getPathToVersionCSV() {
+		return model.getPathToVersionCSV();
 	}
 }

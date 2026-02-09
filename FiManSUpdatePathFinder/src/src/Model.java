@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -50,11 +51,12 @@ import gui.DescriptionPanel;
 import gui.FIBReleaseDescriptionPanel;
 import gui.FIBdescriptionPanel;
 import gui.JAMdescriptionPanel;
+import gui.ModListPanel;
 import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V1.8.6";
+	private static String version = "V2.0.0";
 	
 	private Config configFile;
 	
@@ -87,6 +89,10 @@ public class Model {
 	private String startingData;
 	
 	private Update[] ASSreleasess;
+	
+	private List<VerEntry> verEntryList;
+	private List<RowPair> modInput;
+	private String modListResult;
 	
 	Map<String, String> userInputs = new HashMap<>();
 	Map<Update, ArrayList<Boolean>> boxStates = new HashMap<>();
@@ -186,6 +192,9 @@ public class Model {
 			}
 			
 		}
+		modInput = new ArrayList<>();
+		setModListResult("");
+		
 		startingData = getDataToSave();
 		
 		
@@ -501,6 +510,9 @@ public class Model {
 		int maxPanelWidth = (int)Math.round(((float) minPanelWidth / 100f) * 26 + minPanelWidth);
 		controller.setMaxPanelWidth(maxPanelWidth);
 		controller.fireDividerPropertyChange();
+		
+		setModListResult("");
+		showModListResult(getModListResult());
 	}
 	
 	private void removeAssReleasesFromJamPath() {
@@ -812,6 +824,7 @@ public class Model {
 		if (configFile.maintainScrollPosChckbxState == true) {
 			controller.setScrollPos(controller.getScrollPos());
 		}
+		showModListResult(getModListResult());
 	}
 
 	private void updateModelInputs() {
@@ -864,6 +877,8 @@ public class Model {
 		
 		data += "</correlatingCheckBoxStates>" + "\n";
 		
+		data += "<modList>\n" + getModListResult() + "</modList>\n";
+		
 		return data;
 	}
 	
@@ -885,7 +900,6 @@ public class Model {
 		if (startingData.equals(getDataToSave()) == false) {
 			int selectedValue = controller.showOptionDialog("Ihre Änderungen speichern?\n\nEs wurden ungespeicherte Änderungen gefunden!", new Object[] {"Speichern", "Nicht speichern", "Abbruch"});
 		
-			//System.out.println(selectedValue);
 			if (selectedValue == 0) { //save
 				if (saveDataToFile() == -1) { //cancel at saveDataToFile
 					return true;
@@ -983,6 +997,10 @@ public class Model {
 		} catch (PassedStateNotFoundException e) {
 			controller.showMessageDialog(e.getMessage());
 		}
+		
+		this.modInput = new ArrayList<RowPair>();
+		setModListResult(stringBetween(data, "modList").trim());
+		showModListResult(getModListResult());
 		
 		startingData = getDataToSave();
 	}
@@ -1215,6 +1233,17 @@ public class Model {
 			FLAG = true;
 		}
 		
+		if (configFile.getPathToVersionCSV().equals(optionPanel.getTextFieldPathToVersionCSV()) == false) {
+			try {
+				configFile.setPathToVersionCSV(optionPanel.getTextFieldPathToVersionCSV());
+				needToRestart = true;
+			} catch (FileNotFoundException e) {
+				controller.showMessageDialog("Keine Datei an angegebenem Pfad gefunden!");
+				optionPanel.setTextFieldPathToVersionCSV(configFile.getPathToVersionCSV());
+				FLAG = true;
+			}
+		}
+		
 		if (FLAG == true) return false;
 		
 		if (Float.compare(configFile.fontSize, (Float) optionPanel.spinnerFontSize.getValue()) != 0) {
@@ -1430,17 +1459,17 @@ public class Model {
 		DescriptionPanel newDescriptionPanel = null;
 		if (update.getType().equals("ASS")) {
 			if (Arrays.asList(ASSreleasess).contains(update)) {
-				newDescriptionPanel = new ASSReleaseDescriptionPanel(update, controller.getFont(), configFile);
+				newDescriptionPanel = new ASSReleaseDescriptionPanel(update, controller.getFont(), configFile, new ShowModListListener(controller));
 			} else {
-				newDescriptionPanel = new ASSdescriptionPanel(update, controller.getFont(), configFile);
+				newDescriptionPanel = new ASSdescriptionPanel(update, controller.getFont(), configFile, new ShowModListListener(controller));
 			}
 		} else if (update.getType().equals("JAM")) {
-			newDescriptionPanel = new JAMdescriptionPanel(update, controller.getFont(), configFile);
+			newDescriptionPanel = new JAMdescriptionPanel(update, controller.getFont(), configFile, new ShowModListListener(controller));
 		} else if (update.getType().equals("FIB")) {
 			if (update.getVersion() % 10 == 0) {
-				newDescriptionPanel = new FIBReleaseDescriptionPanel(update, controller.getFont(), configFile);
+				newDescriptionPanel = new FIBReleaseDescriptionPanel(update, controller.getFont(), configFile, new ShowModListListener(controller));
 			} else {
-				newDescriptionPanel = new FIBdescriptionPanel(update, controller.getFont(), configFile);
+				newDescriptionPanel = new FIBdescriptionPanel(update, controller.getFont(), configFile, new ShowModListListener(controller));
 			}
 		}
 		createdDescriptionPanels.add(newDescriptionPanel);
@@ -1468,6 +1497,8 @@ public class Model {
 		optionPanel.secondaryBackgroundColorPreview.setBackground(Color.decode(optionPanel.textFieldSecondaryBackgroundColor.getText()));
 		optionPanel.foregroundColorPreview.setBackground(Color.decode(optionPanel.textFieldForegroundColor.getText()));
 		optionPanel.secondaryForegroundColorPreview.setBackground(Color.decode(optionPanel.textFieldSecondaryForegroundColor.getText()));
+		
+		optionPanel.setTextFieldPathToVersionCSV(configFile.getPathToVersionCSV());
 		return optionPanel;
 	}
 
@@ -1476,7 +1507,7 @@ public class Model {
 	}
 	
 	public String getPathToUpdate() {
-		return getChooserFilePath(configFile.getPathToUpdates());
+		return getChooserFilePath(configFile.getPathToUpdates(), "(*.xml)", new String[] { "xml" });
 	}
 	
 	public String getPathToFibUpdate() {
@@ -1495,10 +1526,10 @@ public class Model {
 		return getChooserDirectoryPath(configFile.pathToJamFiles);
 	}
 	
-	private String getChooserFilePath(String currentDirectory) {
+	private String getChooserFilePath(String currentDirectory, String description, String[] extensions) {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File(currentDirectory));
-		chooser.setFileFilter(new FileNameExtensionFilter("(*.xml)", "xml"));
+		chooser.setFileFilter(new FileNameExtensionFilter(description, extensions));
 		if (chooser.showOpenDialog(controller.getParentForPositionOnly()) == JFileChooser.APPROVE_OPTION) {
 			return chooser.getSelectedFile().getPath();
 		};
@@ -1572,6 +1603,8 @@ public class Model {
 		
 		controller.setDesciptionInputs(userInputs);
 		controller.setTypeComboBox(null); //This calls typeChanged() and clears many fields. Be sure to call it before getDataToSave()!
+		this.modInput = new ArrayList<>();
+		showModListResult(getModListResult());
 		startingData = getDataToSave();
 		controller.removeDescriptionPanel(); //SplitPaneDividerPos is set in here
 	}
@@ -1771,5 +1804,239 @@ public class Model {
 			controller.showMessageDialog(e.getMessage()); //Should only happen if an error occurs during the automated creation of a new file and the file is then automatically deleted again.
 			System.exit(0);
 		}
+	}
+	
+	public static boolean isNumeric(String s) {
+		if (s == null || s.isEmpty()) {
+			return false;
+		}
+		for (int i = 0; i < s.length(); i++) {
+			if (!Character.isDigit(s.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public List<VerEntry> getVersionCSV(String csvFilePath) throws FileNotFoundException {
+		File csv = new File(csvFilePath);
+		
+		List<VerEntry> csvEntryList = new ArrayList<>();
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(csv))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] values = line.split(";");
+				if (values.length < 7) return null;
+				
+				for (int i = 0; i < values.length; i++) {
+					values[i] = values[i].replace("\"", "");
+				}
+				
+				values[0] = values[0].trim();
+				if (!isNumeric(values[0])) {
+					controller.showMessageDialog("modNumber: \"" + values[0] + "\" ist keine Nummer!");
+					continue;
+				}
+				int modNumber = Integer.parseInt(values[0]);
+				
+				int version = -1;
+				if (isNumeric(values[2])) {
+					version = Integer.parseInt(values[2]);
+				} else if (!values[2].trim().isEmpty()) {
+					controller.showMessageDialog("version: \"" + values[2] + "\" bei modNumber: " + modNumber + " ist keine Nummer!");
+				}
+				
+				String component = values[3];
+				String library = values[4];
+				String sourceFile = values[5];
+				String action = values[6];
+				
+				
+				
+				int origlen = component.length();
+				
+				if (library.trim().equals("VSWIFC") && !sourceFile.trim().toUpperCase().equals("QDDSSRC")) {
+					component = component.substring(0, 6);
+				} else if (library.trim().equals("VSWIFC") && sourceFile.trim().toUpperCase().equals("QDDSSRC")) {
+					component = component.substring(0, 5);
+					component += "PRT";
+				}
+				if (component.length() < origlen) {
+					StringBuilder str = new StringBuilder(component);
+					while (str.length() < origlen) {
+						str.append(' ');
+					}
+					component = str.toString();
+				}
+				
+				
+				VerEntry entry = new VerEntry(modNumber, version, component,
+						library, sourceFile, action);
+				csvEntryList.add(entry);
+				
+				//second entry for targetRelease
+				int targetRelease = -1;
+				if (isNumeric(values[1])) {
+					targetRelease = Integer.parseInt(values[1]);
+					entry = new VerEntry(modNumber, targetRelease, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+				} else if (!values[1].trim().isEmpty()) {
+					controller.showMessageDialog("targetRelease: \"" + values[1] + "\" bei modNumber: " + modNumber + " ist keine Nummer!");
+				}
+
+				
+				
+				if (version >= 6111 && version <= 6119) {
+					int newVersion = version - 98; //e.g: 6116 => 6018
+					entry = new VerEntry(modNumber, newVersion, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+					newVersion = newVersion - 189; //e.g: 6018 => 5829
+					entry = new VerEntry(modNumber, newVersion, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+					newVersion = newVersion - 100; //e.g: 5829 => 5729
+					entry = new VerEntry(modNumber, newVersion, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+				} else if (version >= 6011 && version <= 6019) {
+					int newVersion = version - 189; //e.g: 6018 => 5829
+					entry = new VerEntry(modNumber, newVersion, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+					newVersion = newVersion - 100; //e.g: 5829 => 5729
+					entry = new VerEntry(modNumber, newVersion, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+				} else if (version >= 5821 && version <= 5829) {
+					int newVersion = version - 100; //e.g: 5829 => 5729
+					entry = new VerEntry(modNumber, newVersion, component,
+							library, sourceFile, action);
+					csvEntryList.add(entry);
+				} else if (version >= 5721 && version <= 5729) {
+				    //nothing
+				}
+			}
+		} catch (FileNotFoundException e) {
+			throw e;
+		} catch (IOException e) {
+			controller.showMessageDialog(e.getMessage());
+		}
+		return csvEntryList;
+	}
+	
+	public void openModListInput() {
+		if (installedJam == null || installedAss == null || installedFib == null) {
+			controller.showMessageDialog("kein Pfad vorhanden!");
+			return;
+		}
+		forceOpenModListInput();
+	}
+	
+	public void forceOpenModListInput() {
+		String pathToVersionCSV = this.configFile.getPathToVersionCSV();
+		try {
+			this.verEntryList = getVersionCSV(pathToVersionCSV);
+		} catch (FileNotFoundException e) {
+			controller.showMessageDialog("FileNotFoundException\n" + pathToVersionCSV +
+					"\nDas System kann die angegebene Datei nicht finden." +
+					"\n\n Der Pfad kann in den Einstellugnen geändert werden.");
+			return;
+		}
+		for (int i = 0; i < this.verEntryList.size(); i++) {
+			if (this.verEntryList.get(i).component.equals("F4222D")) {
+				System.out.println(this.verEntryList.get(i).modNumber);
+			}
+		}
+		String fibModBib = controller.getFibModBib();
+		
+		ModListPanel modListPanel = new ModListPanel(controller.getFont(), fibModBib, modInput,
+				configFile.getBackgroundColor(),
+				configFile.getSecondaryBackgroundColor(), 
+				configFile.getForegroundColor(), 
+				configFile.getSecondaryForegroundColor());
+		controller.showModListInput(modListPanel);
+	}
+
+	public void generateModListOutput(List<RowPair> input) {
+		this.modInput = input;
+		setModListResult("Keine Sourcen betroffen\n");	
+		
+		if (input == null || this.verEntryList == null || this.path == null) {
+			showModListResult(getModListResult());
+			return;
+		}
+		
+		if (input.size() <= 0 || this.verEntryList.size() <= 0 || this.path.size() <= 0) {
+			showModListResult(getModListResult());
+			return;
+		}
+		
+		List<VerEntry> verEntryListFiltert = new ArrayList<VerEntry>();
+		for (int i = 0; i < this.verEntryList.size(); i++) {
+			VerEntry varEntry = this.verEntryList.get(i);
+			String component = varEntry.component.trim().toLowerCase();
+			String action = varEntry.action.trim().toUpperCase();
+			for (RowPair rowPair : input) {
+				String file = rowPair.left.getText().trim().toLowerCase();
+				if (component.equals(file) && containsVersion(path, varEntry.version)
+						&& (action.equals("ADD") || action.equals("CHG") || action.equals("CMP"))) {
+					verEntryListFiltert.add(this.verEntryList.get(i));
+				}
+			}
+		}
+		
+		if (verEntryListFiltert.size() <= 0) {
+			showModListResult(getModListResult());
+			return;
+		}
+		
+		verEntryListFiltert = VerEntry.filter(verEntryListFiltert);
+		
+		setModListResult(buildModListResult(verEntryListFiltert));
+		showModListResult(getModListResult());
+	}
+	
+	private boolean containsVersion(ArrayList<Update> path, int version) {
+		for (Update update : path) {
+			if (!update.getType().equals("FIB")) continue;
+			if (update.getVersion() == version) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private String buildModListResult(List<VerEntry> list) {
+		String result = "";
+		list.sort(Comparator.comparing(e -> e.sourceFile));
+		for (int i = 0; i < list.size(); i++) {
+			result = result + list.get(i) + "\n";
+			if ((i+1) < list.size()) {
+				if (!list.get(i).sourceFile.equals(list.get(i+1).sourceFile)) {
+					result = result + "\n";
+				}
+			}
+		}
+
+		return result;
+	}
+	
+	private void showModListResult(String result) {
+		controller.setModListOutput(result);
+	}
+	
+	private void setModListResult(String result) {
+		this.modListResult = result;
+	}
+	
+	private String getModListResult() {
+		return this.modListResult;
+	}
+
+	public String getPathToVersionCSV() {
+		return getChooserFilePath(configFile.getPathToVersionCSV(), "(*.csv)", new String[] { "csv" });
 	}
 }
