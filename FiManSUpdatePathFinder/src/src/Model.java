@@ -56,7 +56,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V2.0.0";
+	private static String version = "V2.1.0";
 	
 	private Config configFile;
 	
@@ -358,8 +358,6 @@ public class Model {
 		installedJam = null;
 		installedAss = null;
 		installedFib = null;
-		
-		System.out.println("typeChanged: " + selectedType);
 	}
 
 	public void targetUpdateChanged(int selectedIndex) {
@@ -377,6 +375,8 @@ public class Model {
 		}
 		
 		if (selectetTargetUpdate != null && selectetTargetUpdate.equals(newUpdate)) return;
+		
+		Map<Update, ArrayList<Boolean>> correlatingStates = controller.getCorrelatingCheckBoxStates();
 		
 		controller.removeJamUpdateInput();
 		controller.removeAssUpdateInput();
@@ -411,35 +411,90 @@ public class Model {
 			controller.addAppCheckBox();
 		}
 		
-		installedJam = null;
-		installedAss = null;
-		installedFib = null;
-			
-		System.out.println("TargetUpdate: " + selectetTargetUpdate);
+		switch (selectedType) {
+			case "FIB": {
+				setComboBoxIfIndexNonNegative(installedJam);
+				setComboBoxIfIndexNonNegative(installedAss);
+				setComboBoxIfIndexNonNegative(installedFib);
+				break;
+			}
+			case "ASS": {
+				setComboBoxIfIndexNonNegative(installedJam);
+				setComboBoxIfIndexNonNegative(installedAss);
+				installedFib = null;
+				break;
+			}
+			case "JAM": {
+				setComboBoxIfIndexNonNegative(installedJam);
+				installedAss = null;
+				installedFib = null;
+				break;
+			}
+		}
+		
+		showPath();
+		
+		try {
+			controller.setBoxStates(correlatingStates, false);
+		} catch (PassedStateNotFoundException e) {/*do nothing*/}
+	}
+	
+	private void setComboBoxIfIndexNonNegative(Update update) {
+		if (update == null) return;
+		int index = -1;
+		switch (update.getType()) {
+			case "FIB": index = selectableInsFibUpdates.indexOf(update); break;
+			case "ASS": index = selectableInsAssUpdates.indexOf(update); break;
+			case "JAM": index = selectableInsJamUpdates.indexOf(update); break;
+		}
+		
+		if (index < 0) { //-1 e.g. if installedFib is not in selectableInsFibUpdates e.g. installedFib >= selectetTargetUpdate
+			switch (update.getType()) {
+				case "FIB": installedFib = null; break;
+				case "ASS": installedAss = null; break;
+				case "JAM": installedJam = null; break;
+			}
+			return;
+		}
+		
+		switch (update.getType()) {
+			case "FIB": controller.setInsFibUpdateComboBox(index); break;
+			case "ASS": controller.setInsAssUpdateComboBox(index); break;
+			case "JAM": controller.setInsJamUpdateComboBox(index); break;
+		}
 	}
 	
 	public void insJamChanged(int selectedIndex) {
 		if (installedJam != null && installedJam.equals(selectableInsJamUpdates.get(selectedIndex))) return;
 		installedJam = selectableInsJamUpdates.get(selectedIndex);
-		System.out.println("InsJamUpdate: " + installedJam);
+		Map<Update, ArrayList<Boolean>> correlatingStates = controller.getCorrelatingCheckBoxStates();
 		controller.clearList();
 		showPath();
+		try {
+			controller.setBoxStates(correlatingStates, false);
+		} catch (PassedStateNotFoundException e) {/*do nothing*/}
 	}
 
 	public void insAssChanged(int selectedIndex) {
 		if (installedAss != null && installedAss.equals(selectableInsAssUpdates.get(selectedIndex))) return;
 		installedAss = selectableInsAssUpdates.get(selectedIndex);
-		System.out.println("InsAssUpdate: " + installedAss);
+		Map<Update, ArrayList<Boolean>> correlatingStates = controller.getCorrelatingCheckBoxStates();
 		controller.clearList();
 		showPath();
+		try {
+			controller.setBoxStates(correlatingStates, false);
+		} catch (PassedStateNotFoundException e) {/*do nothing*/}
 	}
 	
 	public void insFibChanged(int selectedIndex) {
 		if (installedFib != null && installedFib.equals(selectableInsFibUpdates.get(selectedIndex))) return;
 		installedFib = selectableInsFibUpdates.get(selectedIndex);
-		System.out.println("InsFibUpdate: " + installedFib);
+		Map<Update, ArrayList<Boolean>> correlatingStates = controller.getCorrelatingCheckBoxStates();
 		controller.clearList();
 		showPath();
+		try {
+			controller.setBoxStates(correlatingStates, false);
+		} catch (PassedStateNotFoundException e) {/*do nothing*/}
 	}
 	
 	private void showPath() {
@@ -447,7 +502,6 @@ public class Model {
 		if (selectedType.equals("JAM") && installedJam == null) return;
 		if (selectedType.equals("ASS") && (installedJam == null || installedAss == null)) return;
 		if (selectedType.equals("FIB") && (installedJam == null || installedAss == null || installedFib == null)) return;
-		System.out.println("showPath");
 		
 		controller.clearList();
 		
@@ -1161,8 +1215,6 @@ public class Model {
 			String textFieldText = optionPanel.textFieldBackgroundColor.getText();
 			try {
 				Color backgroundColor = Color.decode(textFieldText);
-				System.out.println(configFile.getBackgroundColor());
-				System.out.println(backgroundColor);
 				if (configFile.getBackgroundColor().equals(backgroundColor) == false) {
 					configFile.setBackgroundColor(backgroundColor);
 					needToRestart = true;
@@ -1180,8 +1232,6 @@ public class Model {
 			String textFieldText = optionPanel.textFieldSecondaryBackgroundColor.getText();
 			try {
 				Color secondaryBackgroundColor = Color.decode(textFieldText);
-				System.out.println(configFile.getSecondaryBackgroundColor());
-				System.out.println(secondaryBackgroundColor);
 				if (configFile.getSecondaryBackgroundColor().equals(secondaryBackgroundColor) == false) {
 					configFile.setSecondaryBackgroundColor(secondaryBackgroundColor);
 					needToRestart = true;
@@ -1217,8 +1267,6 @@ public class Model {
 			String textFieldText = optionPanel.textFieldSecondaryForegroundColor.getText();
 			try {
 				Color secondaryForegroundColor = Color.decode(textFieldText);
-				System.out.println(configFile.getSecondaryForegroundColor());
-				System.out.println(secondaryForegroundColor);
 				if (configFile.getSecondaryForegroundColor().equals(secondaryForegroundColor) == false) {
 					configFile.setSecondaryForegroundColor(secondaryForegroundColor);
 					needToRestart = true;
@@ -1944,11 +1992,6 @@ public class Model {
 					"\nDas System kann die angegebene Datei nicht finden." +
 					"\n\n Der Pfad kann in den Einstellugnen geändert werden.");
 			return;
-		}
-		for (int i = 0; i < this.verEntryList.size(); i++) {
-			if (this.verEntryList.get(i).component.equals("F4222D")) {
-				System.out.println(this.verEntryList.get(i).modNumber);
-			}
 		}
 		String fibModBib = controller.getFibModBib();
 		
