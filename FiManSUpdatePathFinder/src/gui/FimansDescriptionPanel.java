@@ -127,7 +127,7 @@ public class FimansDescriptionPanel extends DescriptionPanel{
 			csvPath = "Noch keine angegeben!";
 		}
     	this.addButtonAndCopyableText(new Object[] {csvPath}, new Object[] {this.pathToParentOfVersionCSV}, true);
-    	this.addButtonAndLabel("Hinweis: CSV-Datei am besten vor jeder Generierung über JFR/FTVERX exportieren und ersetzen.", "call JFR/FTVERX");
+    	this.addButtonAndLabel("Hinweis: CSV-Datei am besten vor jeder Generierung über JFR/FTVERC exportieren und ersetzen.", "call JFR/FTVERC");
     	
     	this.addModListButton(showModListListener);
     	this.modListOutput = this.addModListOutput();

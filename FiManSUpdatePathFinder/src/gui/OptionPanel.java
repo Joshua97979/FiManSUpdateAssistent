@@ -210,7 +210,7 @@ public class OptionPanel extends JPanel{
 		panelPathToVersionCSV.add(textFieldPathToVersionCSV);
 		btnChoosePathToVersionCSV = new ScaledButton(getClass().getResource("/icons/Folder_open.png"), this.getFont());
 		panelPathToVersionCSV.add(btnChoosePathToVersionCSV, BorderLayout.EAST);
-		addOption("Pfad zu Versions-CSV", panelPathToVersionCSV);
+		addOption("Pfad zu Updateveränderungen-CSV", panelPathToVersionCSV);
 		
 		
 		

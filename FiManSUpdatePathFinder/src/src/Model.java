@@ -56,7 +56,7 @@ import gui.OptionPanel;
 
 public class Model {
 	
-	private static String version = "V2.1.0";
+	private static String version = "V2.1.1";
 	
 	private Config configFile;
 	
@@ -1990,7 +1990,8 @@ public class Model {
 		} catch (FileNotFoundException e) {
 			controller.showMessageDialog("FileNotFoundException\n" + pathToVersionCSV +
 					"\nDas System kann die angegebene Datei nicht finden." +
-					"\n\n Der Pfad kann in den Einstellugnen geändert werden.");
+					"\nEs muss eine gültige Datei als Datengrundlage angegeben werden!" +
+					"\n\n Der Pfad kann in den Einstellugnen unter \"Pfad zu Updateveränderungen-CSV\" geändert werden.");
 			return;
 		}
 		String fibModBib = controller.getFibModBib();
